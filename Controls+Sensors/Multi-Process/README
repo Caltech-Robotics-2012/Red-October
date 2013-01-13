@@ -1,1 +1,1 @@
-Control of combining the threads of the sub
+Control of combining the collected data from the sub into shared memory such that multiple processes can access it efficiently and safely using semaphore controlled shared memory access.
