@@ -8,7 +8,7 @@
 #include <vector>
 #include <stdio.h>
 
-typedef void (*Callback)(void*);
+typedef void* (*Callback)(void*);
 
 /**
  * This class is designed for controlling the access of multiple applications to an area of 
@@ -47,18 +47,26 @@ class ControlledSharedMemory{
   int initialize(void);
 
   /**
-   * Update the shared memory segment.  Spawns a thread to perform the update if unable to first
-   * lock on the semaphore.  If an update is called again without the first thread performing the
-   * update, the process will attempt to lock on the data being updated.  If it is locked, it will
-   * spawn a new thread to update, if not, it will lock, then modify the data.
+   * Update the shared memory segment.  First attempts to lock on the associated semaphore, if this 
+   * succesfull, kills the thread performing an update if it exists and updates the shared memory.
+   * Spawns a thread to perform the update if unable to first lock on the semaphore.  If 
+   * an update is called again without the first thread performing the update, the process 
+   * will attempt to lock on the data being updated.  If it is locked, it will
+   * produce a internal data lock, else it will lock, then modify the data.
    * @param data, Pointer to data
    * @return result, Integer result corresponding to one of the following conditions
    *   -1, Error
    *	0, Immediate update
    *	1, Spawning new thread
    *	2, Updated old thread spawned
+   *	3, Internal Data Lock, This should resolve relatively quickly
    */
   int updateSharedMemory(const void* data);
+
+  static const int IMMEDIATE_UPDATE = 0;
+  static const int SPAWNING_NEW_UPDATE_THREAD = 1;
+  static const int UPDATED_OLD_THREAD = 2;
+  static const int INTERNAL_DATA_LOCK = 3;
 
   /**
    * Requests a read from the shared memory segment.  If the process is able to lock on the data,
@@ -73,6 +81,10 @@ class ControlledSharedMemory{
    *    2, Old thread not finished
    */
   int requestRead(void);
+
+  static const int IMMEDIATE_READ = 0;
+  static const int SPAWNING_NEW_READ_THREAD = 1;
+  static const int OLD_THREAD_RUNNING = 2;
 
   /**
    * Registers a callback for when reads are performed.  A callback accepts a pointer to the local
@@ -108,7 +120,7 @@ class ControlledSharedMemory{
   struct mutex_data_t{
     void* data;
     pthread_mutex_t* mutex;
-  }
+  };
 
   /**
    * State if initialized.
@@ -128,12 +140,12 @@ class ControlledSharedMemory{
   /**
    * Internal vector of read callback functions.
    */
-  std::vector<Callback> readCallbacks;
+  std::vector<Callback>* readCallbacks;
 
   /**
    * Internal vector of update callback functions.
    */
-  std::vector<Callback> updateCallbacks;
+  std::vector<Callback>* updateCallbacks;
 
   /**
    * Internal address of the semaphore.
@@ -171,10 +183,24 @@ class ControlledSharedMemory{
   pthread_mutex_t* readThreadMutex;
 
   /**
-   * Function for update thread entry point.
-   * @param, Pointer to data to be done.
+   * Thread identifier for update thread.
    */
-  void* updateSegment(const mutex_data_t* data);
+  pthread_t* updateThreadIdentifer;
+
+  /**
+   * Function for update thread entry point.
+   */
+  void* updateSegment(void);
+
+  /**
+   * Helper function for launching updateSegment member function, this is because
+   * pthread does not allow you to call memeber function from pthread_create.
+   * @param, Pointer to ControlledSharedMemory to be executed
+   */
+  static void* launchUpdateThread(void*);
+
+  static const int ERROR_UPDATE_THREAD = -1;
+  static const int SUCCESS_UPDATE_THREAD = 0;
 
   /**
    * Initialize the mutexes.
@@ -191,6 +217,23 @@ class ControlledSharedMemory{
    *     0, No Error
    */
   int initializeMemorySegment(void);
+
+  /**
+   * Notifya ll read thread callbacks. Each is call in its own thread!
+   * @return result, Integer result corresponding to one of the following conditions
+   *	-1, Error
+   *	 0, No Error
+   */
+  int notifyReadCallbacks(void);
+
+  /**
+   * Notify all update thread callbacks.  Each is called in its own thread!
+   * @return result, Integer result corresponding to one of the following conditions
+   *	-1, Error
+   *	 0, No Error
+   */
+  int notifyUpdateCallbacks(void);
+  
 };
 
 #endif /* CONTROLLED_SHARED_MEMORY_H */
