@@ -22,9 +22,9 @@ TESTLIBS= -l-ctrl-shared-memory -lpthread -lrt
 TESTINCS=-Itest
 
 all: lib
-lib: $(LIB) 
+lib: $(LIB)
 
-test: test/Test.cpp
+test: test/Test_one.cpp test/Test_two.cpp
 	$(CPP) -L$(LIBDIR) -o test/$@ $^ $(OBJ) $(TESTINCS) $(CFLAGS) $(TESTLIBS)
 
 $(ODIR)/%.o: %.cpp $(DEPS)
