@@ -13,6 +13,8 @@ The dispatcher will aggegate these responses and send a message back to the mast
 
 Validation Gate:
 
+Go forward for 5 m.
+
 The master commander gives a go straight for 5? m to the dispatcher.
 The dispatcher sends a +5 m command to the motion dispatcher.
 The +5 m is converted to a 3D point???
@@ -24,17 +26,24 @@ The dispatcher then signals to the mater commander that the task is finished.
 
 Go to Training (Bouy):
 
+Perform Traffic light:
 
+- Identify the board with targets (visual?)
+- Match the board colors with the given target-colors (also visual)
+- Locate the hole(s) that we need to fire through
+- Line up the sub to be able to shoot the torpedo(es) (ie aim)
+       Side note here: how close can we get? point blank would be ideal...
+- Actually fire the torpedoes
 
+Go to Parking:
 
-Perform Training:
+Perform Parking:
 
-
-Go to Obstalce Course:
-
-Perform Obstacle Course:
-
-
+- Identify the bottom of the bar
+- Move n meters to clear the bar
+- Track the light
+- If we know the pulse time, track the time until it turns green, otherwise trigger on green light.
+- Move forward at full speed for t second to get through
 
 Got to Gladiator Ring:
 
