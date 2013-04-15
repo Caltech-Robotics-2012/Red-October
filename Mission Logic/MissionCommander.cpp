@@ -8,7 +8,9 @@
 #include "MissionCommander.h"
 
 // Runs the given state somehow
-int runState(SubState) {
+int runState(SubState state) {
+  sub_state_functions[state]();
+
   return 0;
 }
 
