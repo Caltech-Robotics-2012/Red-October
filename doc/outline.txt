@@ -1,0 +1,67 @@
+Hello,
+
+The primary purpose of this file is to outline the chain of commands that reflects the structure of the various modules.
+
+Initization:
+
+Master Commander first falls into a initization state.
+This cause it to send a initizaltion command to the dispatcher.
+The dispatcher sends a initialize command to the motion dispatcher and the sensor dispatcher.
+The dispatcher sends a initialization command to each of the motion modules.
+At this point, each motion module will signal via ???.
+The dispatcher will aggegate these responses and send a message back to the master commander.
+
+Validation Gate:
+
+Go forward for 5 m.
+
+The master commander gives a go straight for 5? m to the dispatcher.
+The dispatcher sends a +5 m command to the motion dispatcher.
+The +5 m is converted to a 3D point???
+The 3D point is send to the path generator.
+This set of points is sequencely stepthrough by the motion dispatcher.
+The PID loop runs in the motion dispatcher, reading form the sensors and setting the outputs.
+Once the set of points is exhusted, the motion dispatcher signals to the dispatcher.
+The dispatcher then signals to the mater commander that the task is finished.
+
+Go to Training (Bouy):
+
+Perform Traffic light:
+
+- Identify the board with targets (visual?)
+- Match the board colors with the given target-colors (also visual)
+- Locate the hole(s) that we need to fire through
+- Line up the sub to be able to shoot the torpedo(es) (ie aim)
+       Side note here: how close can we get? point blank would be ideal...
+- Actually fire the torpedoes
+
+Go to Parking:
+
+Perform Parking:
+
+- Identify the bottom of the bar
+- Move n meters to clear the bar
+- Track the light
+- If we know the pulse time, track the time until it turns green, otherwise trigger on green light.
+- Move forward at full speed for t second to get through
+
+Got to Gladiator Ring:
+
+Perform Gladiator Ring:
+
+
+Go to E Tu Brute:
+
+Perfrm E Tu Brute:
+
+
+
+Go to Feed Emperor Grapes:
+
+Perform Emperor Grapes:
+
+
+
+Go to Laurel Wreath:
+
+Perfrom Laurel Wreath:
