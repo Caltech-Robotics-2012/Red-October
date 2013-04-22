@@ -10,152 +10,141 @@
 
 #include "MissionCommander.h"
 
-// Runs the given state somehow
-int runState(SubState state) {
+// Runs the given state through a map call
+SubState runState(SubState state) {
   return sub_state_functions[state]();
 }
 
-// Initialization state
-int init() {
+SubState init() {
   /* TODO:
    * Whatever init requires
    */
-  return ValGate; // Next step
+  return ValGate;
 }
 
-// Validation Gate state
-int validGate() {
+SubState validGate() {
   /* TODO:
    * Move forward
    */
-  return ToTrafLite;
+  return ToTrafLight;
 }
 
-int toTrafLight() {
+SubState toTrafLight() {
   /* TODO:
    * Find path and travel to Traffic Light station
    */
-  return TrafLite;
+  return TrafLight;
 }
 
-// Traffic Light state
-int trafLight() {
+SubState trafLight() {
   /* TODO:
    * See and hit buoys
    */
   return ToPark;
 }
 
-int toPark() {
+SubState toPark() {
   /* TODO:
    * Find path and travel to bins
    */
   return Park;
 }
 
-// Parking state
-int park() {
+SubState park() {
   /* TODO:
    * Check when light is green, drive over (sideways) 
    */
   return ToSpeedTrap;
 }
 
-int toSpeedTrap() {
+SubState toSpeedTrap() {
   /* TODO:
    * Find a way to get to the bins
    */
   return SpeedTrap;
 }
 
-// Speed Trap state
-int speedTrap() {
+SubState speedTrap() {
   /* TODO:
    * Recognize correct bins, drop markers
    */
   return ToTollBooth;
 }
 
-int toTollBooth() {
+SubState toTollBooth() {
   /* TODO:
    * Locate cutout of torpedo targets and move toward it
    */
   return TollBooth;
 }
 
-// Toll Booth state
-int tollBooth() {
+SubState tollBooth() {
   /* TODO:
    * Identify correct targets, aim and fire torpedos
    */
   return ToDriving;
 }
 
-int toDriving() {
+SubState toDriving() {
   /* TODO:
    * Find the appropriate station
    */
   return Driving;
 }
 
-// Driving state
-int driving() {
+SubState driving() {
   /* TODO:
    * Turn wheel, Identify lever state and move it
    */
   return ToDriveThru;
 }
 
-int toDriveThru() {
+SubState toDriveThru() {
   /* TODO:
    * Detect pinger and move to object
    */
   return DriveThru;
 }
 
-// Drive-thru state
-int driveThru() {
+SubState driveThru() {
   /* TODO:
    * Retrieve object and surface in octagon
    */
-  return 0;
+  return COMPLETE;
 }
 
-
-// run everything!
-int main() {
-  // Assign states in map
+/*
+ * Assign states to positions in map
+ * Done here because this doesn't compile if 
+ * the initialization is done in the header...
+ */
+void assignStates() {
   sub_state_functions[Init] = &initSub;
   sub_state_functions[ValGate] = &validGate;
-  sub_state_functions[TrafLite] = &trafLight;
+  sub_state_functions[TrafLight] = &trafLight;
   sub_state_functions[Park] = &park;
   sub_state_functions[SpeedTrap] = &speedTrap;
   sub_state_functions[TollBooth] = &tollBooth;
   sub_state_functions[Driving] = &driving;
   sub_state_functions[DriveThru] = &driveThru;
 
-  // Transit States
-  sub_state_functions[ToTrafLite] = &toTrafLight;
+  sub_state_functions[ToTrafLight] = &toTrafLight;
   sub_state_functions[ToPark] = &toPark;
   sub_state_functions[ToSpeedTrap] = &toSpeedTrap;
   sub_state_functions[ToTollBooth] = &toTollBooth;
   sub_state_functions[ToDriving] = &toDriving;
   sub_state_functions[ToDriveThru] = &toDriveThru;
+}
 
 
+int main() {
 
-  int i = 0; // Numerically call states
-  int cur = 0
+  assignStates();
 
-  while(i < 200) { // Last fn should return 200 (or higher)
-    cur = runState(i);
+  SubState current = 0;
 
-    if(cur == 100) {
-      i = runstate(cur);
-    } else {
-      i = cur;
-    }
-
+  while(current != COMPLETE) {
+    current = runState(current);
   }
 
   return 0;
