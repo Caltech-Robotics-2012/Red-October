@@ -6,13 +6,14 @@
 #ifndef __MISSIONCOMMANDER_H__
 #define __MISSIONCOMMANDER_H__
 
-#include <stdlib>
+#include <cstdlib>
 #include <unordered_map>
 
 // enum the states
 enum SubState { Init = 00, ValGate = 10, TrafLite = 20, Park = 30,
 		SpeedTrap = 40, TollBooth = 50, Driving = 60, DriveThru = 70,
-		Commute = 100 };
+		ToTrafLite = 120, ToPark = 130, ToSpeedTrap = 140, 
+		ToTollBooth = 150, ToDriving = 160, ToDriveThru = 170 };
 
 /* 
  * A map of the different functions...supposedly
@@ -22,47 +23,43 @@ enum SubState { Init = 00, ValGate = 10, TrafLite = 20, Park = 30,
 typedef int (*state_function)();
 std::unordered_map<int, state_functiion> sub_state_functions;
 
-
 // Function to call different states:
 int runState(SubState state); 
 
-
 // Initialization
 int initSub();
-sub_state_functions[Init] = &initSub;
 
 // Validation Gate
 int validGate();
-sub_state_functions[ValGate] = &validGate;
 
 // Move to Traffic Light
+int toTrafLight();
 // Traffic Light
 int trafLight();
-sub_state_functions[TrafLite] = &trafLight;
 
 // Move to Parking
+int toPark();
 // Parking
 int park();
-sub_state_functions[Park] = &park;
 
 // Move to Speed Trap
+int toSpeedTrap();
 // Speed Trap
 int speedTrap();
-sub_state_functions[SpeedTrap] = &speedTrap;
 
 // Move to Toll Booth
+int toTollBooth();
 // Toll Booth
 int tollBooth();
-sub_state_functions[TollBooth] = &tollBooth;
 
 // Move to Driving
+int toDriving();
 // Driving
 int driving();
-sub_state_functions[Driving] = &driving;
 
 // Move to Drive-thru
+int toDriveThru();
 // Drive-thru
 int driveThru();
-sub_state_functions[DriveThru] = &driveThru;
 
 #endif
