@@ -1,0 +1,23 @@
+General Idea of the Red-October Logging System
+:Basith Fahumy
+06/08/2013
+
+The logger program currently defines a Log class.
+If included in another program, instances of the Log 
+   class can be created, and the write_msg() method
+   can be used to write to the log file.
+
+A class is used because this gives us flexibility in 
+  determining how many log files (e.g. all, error, sensors)
+  we want to create. 
+
+
+Usage:
+
+Create a log as new Log(std::string(log's name here)).
+This will create a current log file with the name "name1.log".
+If log(s) already exist, they will be pushed back to the
+   preset limit (a constant integer, NUM_LOGS) found in the
+   header file.
+
+The log can be written to using logname.write_msg(std::string("message"))
