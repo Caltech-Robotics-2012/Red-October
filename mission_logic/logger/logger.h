@@ -25,33 +25,29 @@
  * #include <sys/types.h>
  */
 
-/*
- * The number of *.log files we will keep,
- * where *1.log is the most recent, *n.log is the oldest.
- */
-#define NUM_LOGS 5 
-
 class Log {
   
  protected:
+
+  /*
+   * The number of *.log files we will keep,
+   * where *1.log is the most recent, *(NUM_LOGS).log is the oldest.
+   */
+  const int NUM_LOGS = 5;
+
   std::string type; // e.g., all, thruster
   std::string log_name; // name of the log file
-  ofstream current_log; 
+  std::ofstream current_log; // The log file the instance will write to
 
  private:
-  // Functions called internally
-  bool file_exists(std::string checkfile);
-  void copy_files(std::string from, std::string to);
-  void create_file(int curLogs);
+  bool log_exists(std::string checkfile);
+  void copy_log(std::string from, std::string to);
+  void create_log(int curLogs);
  
  public:
-  // Constructor
   Log(std::string s);
-
-  // Destructor
   ~Log();
-  
-  // Function called externally 
+   
   void write_msg(std::string message);
 }
 
