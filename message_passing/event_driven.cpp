@@ -1,4 +1,5 @@
 #include "message.hpp"
+#include "message_passer.hpp"
 #include <unistd.h>
 #include <string.h>
 #include <iostream>

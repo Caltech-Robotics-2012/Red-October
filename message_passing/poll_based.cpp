@@ -2,7 +2,9 @@
 #include <algorithm>
 #include <unistd.h>
 #include <string.h>
+#include <queue>
 #include "message.hpp"
+#include "message_passer.hpp"
 using namespace std;
 
 int main()
@@ -12,13 +14,16 @@ int main()
   const char *s = "Message from poll-based";
   Message to_send(s, strlen(s) + 1);
 
-  Message message;
+  queue<Message> message_queue;
   while (true) {
     sleep(1);
-    if (mp.read_message(&message) == MessagePasser::GOT_MESSAGE) {
+    mp.read_messages(&message_queue);
+    while (!message_queue.empty()) {
+      Message message = message_queue.front();
+      message_queue.pop();
+
       int length;
       char *data = message.getData(&length);
-      cout << "length: " << length << "\n";
       cout << "data: " << data << "\n";
       delete[] data;
     }
