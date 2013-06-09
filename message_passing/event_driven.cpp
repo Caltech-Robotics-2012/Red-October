@@ -14,7 +14,6 @@ void message_handler(void *parameter, Message message)
   cout << "data: " << data << "\n";
 
   delete[] data;
-
 }
 
 int main()
@@ -25,8 +24,14 @@ int main()
   Message to_send(s, strlen(s) + 1);
 
   while (true) {
-    sleep(1);
-    mp.send_message("poll-based", to_send);
+    sleep(5);
+
+    if (mp.send_message("poll-based", to_send) == MessagePasser::SUCCESS) {
+      cout << "Sent message successfully\n";
+    }
+    else {
+      cout << "Failed to send message\n";
+    }
   }
 }
 

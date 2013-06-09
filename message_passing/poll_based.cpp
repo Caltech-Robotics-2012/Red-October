@@ -16,8 +16,10 @@ int main()
 
   queue<Message> message_queue;
   while (true) {
-    sleep(1);
+    sleep(5);
+
     mp.read_messages(&message_queue);
+
     while (!message_queue.empty()) {
       Message message = message_queue.front();
       message_queue.pop();
@@ -27,13 +29,13 @@ int main()
       cout << "data: " << data << "\n";
       delete[] data;
     }
-    mp.send_message("event-driven", to_send);
+
+    if (mp.send_message("event-driven", to_send) == MessagePasser::SUCCESS) {
+      cout << "Sent message successfully\n";
+    }
+    else {
+      cout << "Failed to send message\n";
+    }
   }
-  // for (int i = 0; i < 4; i++) {
-  //   for (int j = 0; j < 4; j++) {
-  //     cout << get_port(i, j) << "\t";
-  //   }
-  //   cout << "\n";
-  // }
 }
 
