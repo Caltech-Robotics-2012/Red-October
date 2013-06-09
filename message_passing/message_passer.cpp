@@ -115,6 +115,8 @@ int connect_to(const char *hostname, int port)
 
   server = gethostbyname(hostname);
   if (server == NULL) {
+    // TODO: very rapid failures cause this to reject
+    // Maybe want to just return -1 and not exit
     fprintf(stderr,"ERROR, no such host\n");
     exit(0);
   }
@@ -202,11 +204,12 @@ MessagePasser::SendStatus MessagePasser::send_message(int other_process_index, M
   if (!send_message_socket(client_fd[other_process_index], message, 0)) {
     int port = get_port(other_process_index, process_index);
     client_fd[other_process_index] = connect_to("localhost", port);
+
+    if (!send_message_socket(client_fd[other_process_index], message, 0)) {
+      return NOT_CONNECTED;
+    }
   }
 
-  if (!send_message_socket(client_fd[other_process_index], message, 0)) {
-    return NOT_CONNECTED;
-  }
 
   return SUCCESS;
 }
@@ -272,21 +275,19 @@ void MessagePasser::run()
     }
 
     for (int i = 0; i < PROCESS_COUNT; i++) {
-      if (client_fd[i] != -1) {
-        if (FD_ISSET(client_fd[i], &readfds)) {
-          Message message;
-          if (!recv_message_socket(client_fd[i], &message, 0)) {
-            client_fd[i] = -1;
+      if (client_fd[i] != -1 && FD_ISSET(client_fd[i], &readfds)) {
+        Message message;
+        if (!recv_message_socket(client_fd[i], &message, 0)) {
+          client_fd[i] = -1;
+        }
+        else {
+          if (message_handler != NULL) {
+            message_handler(parameter, message);
           }
           else {
-            if (message_handler != NULL) {
-              message_handler(parameter, message);
-            }
-            else {
-              // TODO: Lock
-              message_queue.push(message);
-              // TODO: Unock
-            }
+            // TODO: Lock
+            message_queue.push(message);
+            // TODO: Unock
           }
         }
       }
